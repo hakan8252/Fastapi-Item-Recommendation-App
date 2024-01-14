@@ -1,4 +1,4 @@
 fastapi
 joblib
 uvicorn
-scikit-surprise --use-pep517
+surprise
