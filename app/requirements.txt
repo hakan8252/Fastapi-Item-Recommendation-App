@@ -1,4 +1,4 @@
 fastapi
 joblib
 uvicorn
-surprise
+surprise==0.1
