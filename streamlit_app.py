@@ -67,7 +67,7 @@ if page_selection == "Recommendation System":
 # Streamlit app UI for the second page
 if page_selection == "Customer Segmentation":
     # Assuming df is your DataFrame, replace it with your actual DataFrame
-    df = pd.read_csv("app/rfm_df.csv")  # Replace with your actual file path
+    df = pd.read_csv("rfm_df.csv")  # Replace with your actual file path
     # Subheader
     st.subheader("Dataframe")
     st.dataframe(df.head())
