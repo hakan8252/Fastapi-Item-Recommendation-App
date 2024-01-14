@@ -5,8 +5,10 @@ from model import recommender_system
 app = FastAPI()
 
 @app.get("/")
-def home():
-    return {"Welcome"}
+def health_check():
+    # Add any additional checks for application health here
+    # For simplicity, always return 200 OK for this example
+    return {"status": "ok"}
 
 @app.get("/recommend/{item_id}")
 async def get_recommendations(item_id: int, n_recommendation: int = 1):
