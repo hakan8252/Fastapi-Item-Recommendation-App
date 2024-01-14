@@ -39,7 +39,7 @@ The **Customer Segmentation and Item Recommendation App** is a Streamlit and Fas
 
 ## Project Link
 - https://item-recommendation-app.streamlit.app/
-- 
+  
 ## Getting Started
 
 To run the application:
