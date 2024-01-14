@@ -11,6 +11,7 @@ st.title("Recommender System App")
 page_selection = st.sidebar.radio("Select Page", ["Recommendation System", "Customer Segmentation"])
 
 # Function to create sorted stacked bar chart with a different color scale
+@st.cache
 def create_custom_colored_stacked_bar_chart(y_axis):
     avg_y_values = df.groupby("segment")[y_axis].mean().reset_index()
     avg_y_values = avg_y_values.sort_values(by=y_axis, ascending=False)  # Sort by y-axis values
@@ -22,19 +23,30 @@ def create_custom_colored_stacked_bar_chart(y_axis):
     return fig
 
 # Function to create pie chart for segment distribution
+@st.cache
 def create_pie_chart():
     segment_distribution = df['segment'].value_counts().reset_index()
     segment_distribution.columns = ['segment', 'count']
     fig = px.pie(segment_distribution, names='segment', values='count', title='Segment Distribution')
     return fig
 
-
-with open(f"recommendation_model.pkl", "rb") as f:
-    model = joblib.load(f)
-
 # Load the trainset from the file using pickle
-with open("trainset", 'rb') as f:
-    trainset = pickle.load(f)
+@st.cache()
+def load_trainset():
+    with open("trainset", 'rb') as f:
+        return pickle.load(f)
+
+@st.cache()
+def load_recommendation_model():
+    with open("recommendation_model.pkl", "rb") as f:
+        return joblib.load(f)
+
+# Load the trainset using caching
+trainset = load_trainset()
+
+# Load the recommendation model using caching
+model = load_recommendation_model()
+
 
 def recommender_system(item_id, n_recommendation=3):
     try:
