@@ -36,15 +36,15 @@ The **Customer Segmentation and Item Recommendation App** is a Streamlit and Fas
  
 - **Railway FastAPI Configuration:**
   - https://fastapi-item-recommendation-app-production.up.railway.app/docs
- 
+
+## Project Link
+- https://item-recommendation-app.streamlit.app/
+- 
 ## Getting Started
 
 To run the application:
 
 ```bash
 streamlit run streamlit_app.py
-
-## Project Link
-- https://item-recommendation-app.streamlit.app/
 
 
