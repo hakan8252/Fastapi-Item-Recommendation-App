@@ -1,8 +1,7 @@
+import requests
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import joblib
-import pickle
 
 # Streamlit app UI
 st.title("Recommender System App")
@@ -30,39 +29,6 @@ def create_pie_chart(df):
     fig = px.pie(segment_distribution, names='segment', values='count', title='Segment Distribution')
     return fig
 
-# Load the trainset from the file using pickle
-@st.cache_resource
-def load_trainset():
-    with open("trainset", 'rb') as f:
-        return pickle.load(f)
-
-@st.cache_resource
-def load_recommendation_model():
-    with open("recommendation_model.pkl", "rb") as f:
-        return joblib.load(f)
-
-# Load the trainset using caching
-trainset = load_trainset()
-
-# Load the recommendation model using caching
-model = load_recommendation_model()
-
-
-def recommender_system(item_id, n_recommendation=3):
-    try:
-        # Find similar items based on the given item ID
-        similar_items = model.get_neighbors(item_id, k=n_recommendation)  # Get top 3 similar items
-
-        # Get the original item ID 
-        original_item_id = trainset.to_raw_iid(item_id)
-        # Convert the internal indices of similar items to original item IDs
-        similar_item_ids = [trainset.to_raw_iid(similar_item) for similar_item in similar_items]
-
-        result_message = f'Top {n_recommendation} Similar Items for Item {original_item_id}: {similar_item_ids}'
-        st.write(result_message)
-    except Exception as e:
-        st.error(f"An error occurred: {str(e)}")
-
 
 # Streamlit app UI for the second page
 if page_selection == "Recommendation System":
@@ -73,7 +39,14 @@ if page_selection == "Recommendation System":
     # Button to trigger the recommendation
     if st.button("Get Recommendations"):
         # Make a request to the FastAPI endpoint
-        recommender_system(item_id, n_recommendations)
+        response = requests.get(f"https://fastapi-item-recommendation-app-production.up.railway.app/recommend/{item_id}?n_recommendation={n_recommendations}")
+
+        # Display the result
+        if response.status_code == 200:
+            result = response.json()
+            st.success(result)
+        else:
+            st.error(f"Error: {response.status_code} - {response.text}")
 
 
 

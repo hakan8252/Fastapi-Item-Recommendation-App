@@ -1,5 +1,5 @@
-joblib==1.2.0
 surprise
 streamlit
 pandas
 plotly==5.13.1
+requests
