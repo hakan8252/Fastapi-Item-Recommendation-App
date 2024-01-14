@@ -30,23 +30,33 @@ def create_pie_chart(df):
     return fig
 
 
-# Streamlit app UI for the second page
+# Streamlit app UI for the "Recommendation System" page
 if page_selection == "Recommendation System":
     # Input for item_id and number of recommendations
     item_id = st.number_input("Enter Item ID:", value=1, step=1)
-    n_recommendations = st.number_input("Number of Recommendations:", value=3, step=1)
 
-    # Button to trigger the recommendation
-    if st.button("Get Recommendations"):
-        # Make a request to the FastAPI endpoint
-        response = requests.get(f"https://fastapi-item-recommendation-app-production.up.railway.app/recommend/{item_id}?n_recommendation={n_recommendations}")
+    # Validate that item_id is within the desired range
+    if item_id > 745:
+        st.error("Error: Item ID should be 745 or less.")
+    else:
+        n_recommendations = st.number_input("Number of Recommendations:", value=3, step=1)
 
-        # Display the result
-        if response.status_code == 200:
-            result = response.json()
-            st.success(result)
+        # Validate that the number of recommendations is within the desired range
+        if n_recommendations > 10:
+            st.error("Error: Number of Recommendations should be 10 or less.")
         else:
-            st.error(f"Error: {response.status_code} - {response.text}")
+            # Button to trigger the recommendation
+            if st.button("Get Recommendations"):
+                # Make a request to the FastAPI endpoint
+                response = requests.get(f"https://fastapi-item-recommendation-app-production.up.railway.app/recommend/{item_id}?n_recommendation={n_recommendations}")
+
+                # Display the result
+                if response.status_code == 200:
+                    result = response.json()
+                    st.success(result)
+                else:
+                    st.error(f"Error: {response.status_code} - {response.text}")
+
 
 
 
