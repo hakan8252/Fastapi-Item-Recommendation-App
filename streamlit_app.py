@@ -36,19 +36,20 @@ with open(f"recommendation_model.pkl", "rb") as f:
 with open("trainset", 'rb') as f:
     trainset = pickle.load(f)
 
-def recommender_system(item_id, n_recommendation = 3):
-    # Find similar items based on the given item ID
-    similar_items = model.get_neighbors(item_id, k=n_recommendation)  # Get top 3 similar items
+def recommender_system(item_id, n_recommendation=3):
+    try:
+        # Find similar items based on the given item ID
+        similar_items = model.get_neighbors(item_id, k=n_recommendation)  # Get top 3 similar items
 
-    # Get the original item ID 
-    original_item_id = trainset.to_raw_iid(item_id)
-    # Convert the internal indices of similar items to original item IDs
-    similar_item_ids = [trainset.to_raw_iid(similar_item) for similar_item in similar_items]
+        # Get the original item ID 
+        original_item_id = trainset.to_raw_iid(item_id)
+        # Convert the internal indices of similar items to original item IDs
+        similar_item_ids = [trainset.to_raw_iid(similar_item) for similar_item in similar_items]
 
-    print(f'Top {n_recommendation} Similar Items for Item {original_item_id}: {similar_item_ids}')
-    return (f'Top {n_recommendation} Similar Items for Item {original_item_id}: {similar_item_ids}')
-
-
+        result_message = f'Top {n_recommendation} Similar Items for Item {original_item_id}: {similar_item_ids}'
+        st.write(result_message)
+    except Exception as e:
+        st.error(f"An error occurred: {str(e)}")
 
 
 # Streamlit app UI for the second page
