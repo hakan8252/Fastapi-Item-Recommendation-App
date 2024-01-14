@@ -1,8 +1,8 @@
 import streamlit as st
-import requests
 import pandas as pd
 import plotly.express as px
-import json
+import joblib
+import pickle
 
 # Streamlit app UI
 st.title("Recommender System App")
@@ -29,6 +29,27 @@ def create_pie_chart():
     return fig
 
 
+with open(f"recommendation_model.pkl", "rb") as f:
+    model = joblib.load(f)
+
+# Load the trainset from the file using pickle
+with open("trainset", 'rb') as f:
+    trainset = pickle.load(f)
+
+def recommender_system(item_id, n_recommendation = 3):
+    # Find similar items based on the given item ID
+    similar_items = model.get_neighbors(item_id, k=n_recommendation)  # Get top 3 similar items
+
+    # Get the original item ID 
+    original_item_id = trainset.to_raw_iid(item_id)
+    # Convert the internal indices of similar items to original item IDs
+    similar_item_ids = [trainset.to_raw_iid(similar_item) for similar_item in similar_items]
+
+    print(f'Top {n_recommendation} Similar Items for Item {original_item_id}: {similar_item_ids}')
+    return (f'Top {n_recommendation} Similar Items for Item {original_item_id}: {similar_item_ids}')
+
+
+
 
 # Streamlit app UI for the second page
 if page_selection == "Recommendation System":
@@ -39,17 +60,7 @@ if page_selection == "Recommendation System":
     # Button to trigger the recommendation
     if st.button("Get Recommendations"):
         # Make a request to the FastAPI endpoint
-        response = requests.get(f"https://item-recommender-fastapi-app.streamlit.app/recommend/{item_id}?n_recommendation={n_recommendations}")
-        
-        if response.status_code == 200:
-            try:
-                result = response.json()
-                st.success(result)
-            except json.decoder.JSONDecodeError:
-                st.error(f"Response: {response}")
-                st.error(f"Invalid JSON format in response. Content: {response.text}")
-        else:
-            st.error(f"Error: {response.status_code} - {response.text}")
+        recommender_system(item_id, n_recommendations)
 
 
 
